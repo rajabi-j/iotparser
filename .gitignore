@@ -1,0 +1,16 @@
+# Ignore Python bytecode
+*.py[cod]
+__pycache__/
+*.pyo
+
+# Ignore SQLite database
+db.sqlite3
+
+# Ignore Django migrations
+*/migrations/
+
+# Ignore logs
+*.log
+*.out
+*.err
+
