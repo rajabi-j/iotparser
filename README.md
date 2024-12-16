@@ -186,21 +186,11 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-5. Create initial user:
-```bash
-python create_user.py myuser mypass
-```
-
 ### Docker Setup
-1. Build and run with docker-compose:
+Build and run with docker-compose:
 ```bash
 docker-compose build
 docker-compose up -d
-```
-
-2. Create initial user:
-```bash
-docker-compose exec api python create_user.py myuser mypass
 ```
 
 ## Testing
@@ -271,14 +261,20 @@ python manage.py test devices.tests.DeviceStatusTests
 ## Manual Testing
 
 ### 1. Initial Setup
+
+1.1. Create initial user without docker
 ```bash
-# Create user and get token with docker
-docker-compose exec api python create_user.py myuser mypass
-
-# Create user and get token without docker
 python create_user.py myuser mypass
+```
 
-# Save token
+or 
+1.1. Create initial user with docker
+```bash
+docker-compose exec api python create_user.py myuser mypass
+```
+
+1.2. Save token
+```bash
 token="uesr_token_here"
 ```
 
@@ -288,8 +284,10 @@ curl -X POST http://localhost:8000/api/register/ \
   -H "Authorization: Token ${token}" \
   -H "Content-Type: application/json" \
   -d '{"dev_eui": "0123456789ABCDEF"}'
+```
 
-# Save API key
+Save API key
+```bash
 api_key="returned_api_key"
 ```
 
