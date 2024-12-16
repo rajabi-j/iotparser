@@ -1,11 +1,9 @@
-# create_user.py
 import os
 import django
+from django.contrib.auth.models import User
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'iot_parser.settings')
 django.setup()
-
-from django.contrib.auth.models import User
 
 def create_user(username, password):
     try:

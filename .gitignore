@@ -10,7 +10,11 @@ db.sqlite3
 */migrations/
 
 # Ignore logs
+*/logs/
 *.log
 *.out
 *.err
 
+# Virtual environment
+venv/
+env/
