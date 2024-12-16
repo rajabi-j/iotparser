@@ -36,7 +36,7 @@ class DeviceRegistrationTests(APITestCase):
         logger.info("Starting Device Registration Tests")
         logger.info("="*50)
     def setUp(self):
-        logger.info("\n=== Setting up DeviceRegistrationTests ===")
+        logger.info("=== Setting up DeviceRegistrationTests ===")
         self.user = User.objects.create_user(username='testuser', password='testpass')
         logger.info(f"Created test user: {self.user.username}")
         self.client.force_authenticate(user=self.user)
@@ -44,7 +44,7 @@ class DeviceRegistrationTests(APITestCase):
         logger.info(f"Test URL: {self.url}")
 
     def test_valid_registration(self):
-        logger.info("\nTesting valid device registration")
+        logger.info("== Testing valid device registration ==")
         data = {'dev_eui': '0123456789ABCDEF'}
         logger.info(f"Request data: {data}")
         response = self.client.post(self.url, data, format='json')
@@ -54,7 +54,7 @@ class DeviceRegistrationTests(APITestCase):
         self.assertIn('api_key', response.data)
 
     def test_invalid_dev_eui_format(self):
-        logger.info("\nTesting invalid DevEUI format")
+        logger.info("== Testing invalid DevEUI format ==")
         data = {'dev_eui': 'INVALIDDEVEUI'}
         logger.info(f"Request data: {data}")
         response = self.client.post(self.url, data, format='json')
@@ -63,7 +63,7 @@ class DeviceRegistrationTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_duplicate_dev_eui(self):
-        logger.info("\nTesting duplicate DevEUI registration")
+        logger.info("== Testing duplicate DevEUI registration ==")
         Device.objects.create(dev_eui='0123456789ABCDEF', user=self.user)
         logger.info("Created initial device with DevEUI: 0123456789ABCDEF")
         data = {'dev_eui': '0123456789ABCDEF'}
@@ -74,13 +74,13 @@ class DeviceRegistrationTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         
     def tearDown(self):
-        logger.info("=== Cleaning up DeviceRegistrationTests ===\n")
+        logger.info("=== Cleaning up DeviceRegistrationTests ===\n\n")
         User.objects.all().delete()
         Device.objects.all().delete()
 
 class PayloadCreateTests(APITestCase):
     def setUp(self):
-        logger.info("\n=== Setting up PayloadCreateTests ===")
+        logger.info("=== Setting up PayloadCreateTests ===")
         self.user = User.objects.create_user(username='testuser', password='testpass')
         logger.info(f"Created test user: {self.user.username}")
         self.device = Device.objects.create(dev_eui='0123456789ABCDEF', user=self.user)
@@ -91,7 +91,7 @@ class PayloadCreateTests(APITestCase):
         logger.info(f"Set API key in credentials: {self.device.api_key}")
 
     def test_valid_payload(self):
-        logger.info("\nTesting valid payload submission")
+        logger.info("== Testing valid payload submission ==")
         # Test for passing status (hex 01)
         data = {
             'devEUI': '0123456789ABCDEF',
@@ -134,7 +134,7 @@ class PayloadCreateTests(APITestCase):
         self.assertEqual(response.data['status'], 'failing')
 
     def test_invalid_api_key(self):
-        logger.info("\nTesting invalid API key")
+        logger.info("== Testing invalid API key ==")
         self.client.credentials(HTTP_X_API_KEY='invalid-key')
         logger.info("Set invalid API key in credentials: 'invalid-key'")
         data = {
@@ -163,7 +163,7 @@ class PayloadCreateTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_duplicate_payload(self):
-        logger.info("\nTesting duplicate payload submission")
+        logger.info("== Testing duplicate payload submission ==")
         data = {
             'devEUI': '0123456789ABCDEF',
             'fCnt': 1,
@@ -192,7 +192,7 @@ class PayloadCreateTests(APITestCase):
         self.assertEqual(second_response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_missing_required_fields(self):
-        logger.info("\nTesting missing required fields")
+        logger.info("== Testing missing required fields ==")
         data = {
             'devEUI': '0123456789ABCDEF',
             'fCnt': 1,
@@ -216,7 +216,7 @@ class PayloadCreateTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_invalid_base64_data(self):
-        logger.info("\nTesting invalid base64 data")
+        logger.info("== Testing invalid base64 data ==")
         data = {
             'devEUI': '0123456789ABCDEF',
             'fCnt': 1,
@@ -240,14 +240,14 @@ class PayloadCreateTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
     def tearDown(self):
-        logger.info("=== Cleaning up PayloadCreateTests ===\n")
+        logger.info("=== Cleaning up PayloadCreateTests ===\n\n")
         User.objects.all().delete()
         Device.objects.all().delete()
     
         
 class TokenRenewTests(APITestCase):
     def setUp(self):
-        logger.info("\n=== Setting up TokenRenewTests ===")
+        logger.info("=== Setting up TokenRenewTests ===")
         # Create test user
         self.username = 'testuser'
         self.password = 'testpass123'
@@ -265,7 +265,7 @@ class TokenRenewTests(APITestCase):
         logger.info(f"Test URL: {self.url}")
 
     def test_successful_token_renewal(self):
-        logger.info("\nTesting successful token renewal")
+        logger.info("== Testing successful token renewal ==")
         data = {
             'username': self.username,
             'password': self.password
@@ -295,7 +295,7 @@ class TokenRenewTests(APITestCase):
         logger.info("Old token was successfully deleted")
 
     def test_missing_credentials(self):
-        logger.info("\nTesting missing credentials")
+        logger.info("== Testing missing credentials ==")
         # Test missing password
         data = {'username': self.username}
         logger.info(f"Request data (missing password): {data}")
@@ -317,7 +317,7 @@ class TokenRenewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_invalid_credentials(self):
-        logger.info("\nTesting invalid credentials")
+        logger.info("== Testing invalid credentials ==")
         data = {
             'username': self.username,
             'password': 'wrongpassword'
@@ -344,7 +344,7 @@ class TokenRenewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         
     def tearDown(self):
-        logger.info("=== Cleaning up TokenRenewTests ===\n")
+        logger.info("=== Cleaning up TokenRenewTests ===\n\n")
         User.objects.all().delete()
         Token.objects.all().delete()
         
@@ -358,7 +358,7 @@ class DevicePayloadListTests(APITestCase):
         logger.info("="*50)
 
     def setUp(self):
-        logger.info("\n=== Setting up DevicePayloadListTests ===")
+        logger.info("=== Setting up DevicePayloadListTests ===")
         self.user = User.objects.create_user(username='testuser', password='testpass')
         self.device = Device.objects.create(dev_eui='0123456789ABCDEF', user=self.user)
         logger.info(f"Created test device with DevEUI: {self.device.dev_eui}")
@@ -409,7 +409,7 @@ class DevicePayloadListTests(APITestCase):
         self.client.force_authenticate(user=self.user)
 
     def test_valid_payload_list(self):
-        logger.info("\nTesting valid payload list")
+        logger.info("== Testing valid payload list ==")
         response = self.client.get(self.url)
         logger.info(f"Response status: {response.status_code}")
         logger.info(f"Response data: {response.data}")
@@ -418,7 +418,7 @@ class DevicePayloadListTests(APITestCase):
         self.assertEqual(len(response.data), 2)
 
     def test_invalid_dev_eui_payload_list(self):
-        logger.info("\nTesting invalid DevEUI for payload list")
+        logger.info("== Testing invalid DevEUI for payload list ==")
         url = reverse('device-payloads', kwargs={'dev_eui': 'INVALIDDEVEUI'})
         response = self.client.get(url)
         logger.info(f"Response status: {response.status_code}")
@@ -427,7 +427,7 @@ class DevicePayloadListTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_unauthorized_payload_list(self):
-        logger.info("\nTesting unauthorized payload list access")
+        logger.info("== Testing unauthorized payload list access ==")
         self.client.force_authenticate(user=None)
         
         response = self.client.get(self.url)
@@ -437,7 +437,7 @@ class DevicePayloadListTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def tearDown(self):
-        logger.info("=== Cleaning up DevicePayloadListTests ===\n")
+        logger.info("=== Cleaning up DevicePayloadListTests ===\n\n")
         User.objects.all().delete()
         Device.objects.all().delete()
 
@@ -451,7 +451,7 @@ class DeviceStatusTests(APITestCase):
         logger.info("="*50)
 
     def setUp(self):
-        logger.info("\n=== Setting up DeviceStatusTests ===")
+        logger.info("=== Setting up DeviceStatusTests ===")
         self.user = User.objects.create_user(username='testuser', password='testpass')
         self.device = Device.objects.create(
             dev_eui='0123456789ABCDEF',
@@ -464,7 +464,7 @@ class DeviceStatusTests(APITestCase):
         self.url = reverse('device-status', kwargs={'dev_eui': self.device.dev_eui})
 
     def test_valid_device_status(self):
-        logger.info("\nTesting valid device status retrieval")
+        logger.info("== Testing valid device status retrieval ==")
         response = self.client.get(self.url)
         logger.info(f"Response status: {response.status_code}")
         logger.info(f"Response data: {response.data}")
@@ -475,7 +475,7 @@ class DeviceStatusTests(APITestCase):
         self.assertIn('last_updated', response.data)
 
     def test_invalid_dev_eui_status(self):
-        logger.info("\nTesting invalid DevEUI for status")
+        logger.info("== Testing invalid DevEUI for status ==")
         url = reverse('device-status', kwargs={'dev_eui': 'INVALIDDEVEUI'})
         response = self.client.get(url)
         logger.info(f"Response status: {response.status_code}")
@@ -484,7 +484,7 @@ class DeviceStatusTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_unauthorized_status(self):
-        logger.info("\nTesting unauthorized status access")
+        logger.info("== Testing unauthorized status access ==")
         self.client.force_authenticate(user=None) 
         response = self.client.get(self.url)
         logger.info(f"Response status: {response.status_code}")
@@ -493,11 +493,6 @@ class DeviceStatusTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def tearDown(self):
-        logger.info("=== Cleaning up DeviceStatusTests ===\n")
+        logger.info("=== Cleaning up DeviceStatusTests ===\n\n")
         User.objects.all().delete()
         Device.objects.all().delete()
-
-    @classmethod
-    def tearDownClass(cls):
-        super().tearDownClass()
-        logger.info("\nAll tests completed. Log file location: %s", log_filename)
