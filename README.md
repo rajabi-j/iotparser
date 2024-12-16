@@ -268,16 +268,34 @@ python manage.py test devices.tests.DeviceStatusTests
 
 ## Manual Testing
 
-### Device Registration
+## Manual Testing
+
+### 1. Initial Setup
+```bash
+# Create user and get token with docker
+docker-compose exec api python create_user.py myuser mypass
+
+# Create user and get token without docker
+python create_user.py myuser mypass
+
+# Save token
+token="uesr_token_here"
+```
+
+### 2. Device Registration
 ```bash
 curl -X POST http://localhost:8000/api/register/ \
   -H "Authorization: Token ${token}" \
   -H "Content-Type: application/json" \
   -d '{"dev_eui": "0123456789ABCDEF"}'
+
+# Save API key
+api_key="returned_api_key"
 ```
 
-### Payload Submission (Passing)
+### 3. Create Payload
 ```bash
+# Passing Status
 curl -X POST http://localhost:8000/api/payload/ \
   -H "X-API-Key: ${api_key}" \
   -H "Content-Type: application/json" \
@@ -299,15 +317,51 @@ curl -X POST http://localhost:8000/api/payload/ \
   }'
 ```
 
-### Get Device Status
 ```bash
-curl -X GET http://localhost:8000/api/device/0123456789ABCDEF/status/ \
+# Failing Status
+curl -X POST http://localhost:8000/api/payload/ \
+  -H "X-API-Key: ${api_key}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "devEUI": "0123456789ABCDEF",
+    "fCnt": 2,
+    "data": "AA==",
+    "rxInfo": [{
+      "gatewayID": "0123456789ABCDEF",
+      "name": "test-gateway",
+      "time": "2024-01-01T00:00:00Z",
+      "rssi": -60,
+      "loRaSNR": 7.5
+    }],
+    "txInfo": {
+      "frequency": 868100000,
+      "dr": 0
+    }
+  }'
+```
+
+### 4. Token Renewal
+```bash
+curl -X POST http://localhost:8000/api/token-renew/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "myuser",
+    "password": "mypass"
+  }'
+```
+
+
+### 5. List Device Payloads
+```bash
+# List payloads for a device
+curl -X GET http://localhost:8000/api/device/0123456789ABCDEF/payloads/ \
   -H "Authorization: Token ${token}"
 ```
 
-### List Device Payloads
+### 6. Get Device Status
 ```bash
-curl -X GET http://localhost:8000/api/device/0123456789ABCDEF/payloads/ \
+# Get device status
+curl -X GET http://localhost:8000/api/device/0123456789ABCDEF/status/ \
   -H "Authorization: Token ${token}"
 ```
 

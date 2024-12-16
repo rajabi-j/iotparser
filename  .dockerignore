@@ -37,6 +37,3 @@ docker-compose.yml
 *.log
 *.pot
 *.pyc
-
-# Migrations
-# */migrations/*

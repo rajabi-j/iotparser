@@ -6,9 +6,6 @@ __pycache__/
 # Ignore SQLite database
 db.sqlite3
 
-# Ignore Django migrations
-*/migrations/
-
 # Ignore logs
 */logs/
 *.log
